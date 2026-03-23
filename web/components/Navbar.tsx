@@ -28,7 +28,7 @@ export default function Navbar() {
         </div>
         <div className="flex items-center space-x-4">
           <Link
-            href="/app"
+            href="/signup"
             className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-full font-medium transition-all shadow-sm"
           >
             Get started
