@@ -17,7 +17,7 @@ export default function CTASection() {
             href="/app"
             className="w-full sm:w-auto px-8 py-4 bg-green-500 hover:bg-green-400 text-slate-900 rounded-full font-bold text-lg transition-all shadow-lg"
           >
-            Start Free Trial
+            Get started
           </Link>
           <Link
             href="/signup"

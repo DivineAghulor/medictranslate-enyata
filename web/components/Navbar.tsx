@@ -31,7 +31,7 @@ export default function Navbar() {
             href="/app"
             className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-full font-medium transition-all shadow-sm"
           >
-            Start Free Trial
+            Get started
           </Link>
         </div>
       </div>

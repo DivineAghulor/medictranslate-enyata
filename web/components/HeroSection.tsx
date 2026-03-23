@@ -17,7 +17,7 @@ export default function HeroSection() {
             href="/app"
             className="w-full sm:w-auto px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
           >
-            Start Free Trial
+            Get started
           </Link>
           <Link
             href="#how-it-works"
