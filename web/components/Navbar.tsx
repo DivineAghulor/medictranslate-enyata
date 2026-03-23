@@ -30,9 +30,9 @@ export default function Navbar() {
         <div className="flex items-center space-x-4">
           <Button
             asChild
-            className="bg-slate-900 px-5 py-2 text-white shadow-sm hover:bg-slate-800"
+            className="px-5 py-2 text-white shadow-sm  bg-green-600 hover:bg-green-700 "
           >
-            <Link href="/signup">Get started</Link>
+            <Link href="/signup">Signup</Link>
           </Button>
         </div>
       </div>
