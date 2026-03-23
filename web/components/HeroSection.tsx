@@ -14,16 +14,10 @@ export default function HeroSection() {
         </p>
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
           <Link
-            href="/app"
+            href="/signup"
             className="w-full sm:w-auto px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-full font-semibold text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2"
           >
             Get started
-          </Link>
-          <Link
-            href="#how-it-works"
-            className="w-full sm:w-auto px-8 py-4 bg-white border border-gray-200 hover:border-gray-300 text-slate-900 rounded-full font-semibold text-lg transition-all"
-          >
-            Create Free Account
           </Link>
         </div>
         <p className="mt-6 text-sm text-gray-400 font-medium max-w-md mx-auto">
