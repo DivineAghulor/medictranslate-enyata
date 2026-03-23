@@ -1,18 +1,26 @@
-const features = [
+import { ImageUp, Languages, HeartPulse, LucideIcon } from "lucide-react";
+
+type Feature = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+};
+
+const features: Feature[] = [
   {
-    icon: "📷",
+    icon: ImageUp,
     title: "Upload Images",
     description:
       "Easily upload an image of your lab test result. Our system processes and extracts the relevant medical values and text.",
   },
   {
-    icon: "🗣️",
+    icon: Languages,
     title: "Clear Translations",
     description:
       "We translate complex medical terminology into user-friendly explanations so you understand exactly what it means.",
   },
   {
-    icon: "🧭",
+    icon: HeartPulse,
     title: "Health Insights",
     description:
       "Get context around the likely significance of values and guidance on when to seek professional hospital care.",
@@ -36,22 +44,25 @@ export default function FeaturesSection() {
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="bg-slate-50 rounded-3xl p-8 border border-gray-100 hover:shadow-md transition-shadow"
-            >
-              <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-6 text-2xl">
-                {feature.icon}
+          {features.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <div
+                key={feature.title}
+                className="bg-slate-50 rounded-3xl p-8 border border-gray-100 hover:shadow-md transition-shadow"
+              >
+                <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-6 text-green-600">
+                  <Icon size={22} strokeWidth={1.75} />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
