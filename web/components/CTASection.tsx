@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function CTASection() {
   return (
     <section className="py-24 bg-slate-900 text-white relative overflow-hidden mt-12 mb-12 mx-4 sm:mx-6 lg:mx-8 rounded-[3rem]">
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-green-900/40 to-slate-900 z-0"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-green-900/40 to-slate-900 z-0"></div>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <h2 className="text-4xl sm:text-5xl font-bold mb-6">
           Maximize Your Health Knowledge
