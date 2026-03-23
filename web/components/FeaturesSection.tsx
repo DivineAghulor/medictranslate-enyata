@@ -49,9 +49,9 @@ export default function FeaturesSection() {
             return (
               <div
                 key={feature.title}
-                className="bg-slate-50 rounded-3xl p-8 border border-gray-100 hover:shadow-md transition-shadow"
+                className="bg-slate-50 rounded-[var(--radius)] p-8 border border-gray-100 hover:shadow-md transition-shadow"
               >
-                <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-6 text-green-600">
+                <div className="w-12 h-12 bg-white rounded-[var(--radius)] shadow-sm border border-gray-100 flex items-center justify-center mb-6 text-green-600">
                   <Icon size={22} strokeWidth={1.75} />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">

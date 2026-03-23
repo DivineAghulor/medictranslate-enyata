@@ -13,7 +13,7 @@ export default function SignupPage() {
       description="Enter your details to get started."
     >
       <div className="space-y-5">
-        <Alert className="border-green-200 bg-green-50">
+        <Alert className="border-green-200 bg-green-50 p-4">
           <AlertTitle className="text-slate-900">Important</AlertTitle>
           <AlertDescription className="text-slate-600">
             Use the first &amp; last name associated with your NIN number.
@@ -87,7 +87,7 @@ export default function SignupPage() {
 
           <Button
             type="button"
-            className="h-10 w-full rounded-xl bg-green-600 text-white hover:bg-green-700"
+            className="w-full bg-green-600 text-lg font-semibold text-white shadow-lg transition-all hover:-translate-y-px hover:bg-green-700 hover:shadow-xl"
           >
             Create account
           </Button>

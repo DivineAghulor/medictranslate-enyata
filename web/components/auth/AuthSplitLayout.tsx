@@ -7,6 +7,8 @@ type AuthSplitLayoutProps = {
   desktopVariant: "heroRight" | "heroLeft";
   title: string;
   description: string;
+  /** If false, hides the hero panel on all breakpoints. */
+  showHero?: boolean;
   children: ReactNode;
 };
 
@@ -14,8 +16,34 @@ export default function AuthSplitLayout({
   desktopVariant,
   title,
   description,
+  showHero = false,
   children,
 }: AuthSplitLayoutProps) {
+  if (!showHero) {
+    return (
+      <div className="min-h-dvh bg-white text-slate-900">
+        <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-10">
+          <Link href="/" className="mx-auto mb-8 inline-flex items-center gap-2">
+            <div className="grid size-10 place-items-center rounded-[var(--radius)] bg-green-600 text-lg font-bold text-white">
+              M
+            </div>
+            <span className="text-lg font-semibold tracking-tight">
+              MedicTranslate
+            </span>
+          </Link>
+
+          <div className="mx-auto w-full max-w-sm">
+            <div className="mb-7 text-center">
+              <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
+              <p className="mt-1 text-sm text-slate-500">{description}</p>
+            </div>
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const heroMdOrder = desktopVariant === "heroRight" ? "md:order-2" : "md:order-1";
   const formMdOrder = desktopVariant === "heroRight" ? "md:order-1" : "md:order-2";
 
@@ -24,7 +52,7 @@ export default function AuthSplitLayout({
       <div className="mx-auto py-10 flex max-h-full max-w-6xl flex-col md:flex-row md:px-6">
         <section
           className={cn(
-            "relative order-1 flex w-full flex-col justify-between overflow-hidden bg-slate-950 text-white md:min-h-dvh md:w-1/2 md:rounded-3xl",
+            "relative order-1 flex w-full flex-col justify-between overflow-hidden bg-slate-950 text-white md:min-h-dvh md:w-1/2 md:rounded-[var(--radius)]",
             heroMdOrder
           )}
         >
@@ -38,7 +66,7 @@ export default function AuthSplitLayout({
 
           <div className="relative z-10 px-6 pb-8 pt-10 md:px-10 md:pt-12">
             <Link href="/" className="inline-flex items-center gap-2">
-              <div className="grid size-10 place-items-center rounded-xl bg-green-600 text-lg font-bold text-white">
+              <div className="grid size-10 place-items-center rounded-[var(--radius)] bg-green-600 text-lg font-bold text-white">
                 M
               </div>
               <span className="text-lg font-semibold tracking-tight">
@@ -59,7 +87,7 @@ export default function AuthSplitLayout({
           </div>
 
           <div className="relative z-10 px-6 pb-10 md:px-10 md:pb-12">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+            <div className="rounded-[var(--radius)] border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
               <div className="text-sm font-semibold">
                 Get started in minutes
               </div>
@@ -68,7 +96,7 @@ export default function AuthSplitLayout({
                 confidence.
               </div>
               <div className="mt-4 flex items-center gap-2 text-xs text-white/60">
-                <span className="inline-flex size-6 items-center justify-center rounded-full bg-white/10">
+                <span className="inline-flex size-6 items-center justify-center rounded-[var(--radius)] bg-white/10">
                   ✓
                 </span>
                 <span>Privacy-first uploads</span>

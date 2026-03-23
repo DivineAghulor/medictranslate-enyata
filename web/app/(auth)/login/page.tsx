@@ -46,7 +46,7 @@ export default function LoginPage() {
 
         <Button
           type="button"
-          className="h-10 w-full rounded-xl bg-green-600 text-white hover:bg-green-700"
+          className="w-full bg-green-600 text-lg font-semibold text-white shadow-lg transition-all hover:-translate-y-px hover:bg-green-700 hover:shadow-xl"
         >
           Sign in
         </Button>
@@ -64,4 +64,3 @@ export default function LoginPage() {
     </AuthSplitLayout>
   );
 }
-
