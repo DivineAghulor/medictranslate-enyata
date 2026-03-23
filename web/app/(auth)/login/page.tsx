@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
+import PasswordInput from "@/components/auth/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -27,10 +28,9 @@ export default function LoginPage() {
 
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             autoComplete="current-password"
             required
           />

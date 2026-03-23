@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
+import PasswordInput from "@/components/auth/PasswordInput";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,10 +77,9 @@ export default function SignupPage() {
 
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               autoComplete="new-password"
               required
             />
