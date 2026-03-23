@@ -27,17 +27,17 @@ export default function HeroSection() {
           </Link>
         </div>
         <p className="mt-6 text-sm text-gray-400 font-medium max-w-md mx-auto">
-          ⚠️ MedicTranslate is for health education and guidance only. It is
-          not a replacement for licensed medical professionals.
+          ⚠️ MedicTranslate is for health education and guidance only. It is not
+          a replacement for licensed medical professionals.
         </p>
 
         {/* Hero Visual */}
-        <div className="mt-16 sm:mt-24 relative max-w-4xl mx-auto h-[400px] sm:h-[600px] w-full bg-slate-50 rounded-[2rem] border-[8px] border-white shadow-2xl overflow-hidden flex items-center justify-center">
+        <div className="mt-16 sm:mt-24 relative max-w-4xl mx-auto h-100 sm:h-150 w-full bg-slate-50 rounded-[2rem] border-8 border-white shadow-2xl overflow-hidden flex items-center justify-center">
           {/* Background decorative glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-green-50 via-emerald-50/40 to-white -z-10"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-linear-to-tr from-green-50 via-emerald-50/40 to-white -z-10"></div>
 
           {/* Phone mockup */}
-          <div className="w-[280px] h-[580px] bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-800 relative shadow-2xl z-10 overflow-hidden flex flex-col pt-8 bg-white">
+          <div className="w-70 h-145 bg-slate-900 rounded-[2.5rem] border-[6px] border-slate-800 relative shadow-2xl z-10 overflow-hidden flex flex-col pt-8 bg-white">
             {/* Dynamic Island */}
             <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-slate-900 rounded-full z-20"></div>
 
