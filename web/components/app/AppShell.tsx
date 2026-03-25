@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import AppSidebar from "@/components/app/AppSidebar";
 import { ChatStoreProvider, useChatStore } from "@/components/app/chat-store";
@@ -17,7 +16,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col md:flex-row">
+      <div className="mx-auto flex min-h-dvh w-full flex-col md:flex-row">
         <AppSidebar activeThreadId={activeId} />
 
         <main className="flex min-h-0 flex-1 flex-col">
@@ -34,13 +33,6 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
                   : "Loading your history..."}
               </div>
             </div>
-
-            <Link
-              href="/profile"
-              className="rounded-(--radius) border border-border bg-background px-3 py-2 text-sm hover:bg-muted"
-            >
-              Profile
-            </Link>
           </header>
 
           {children}

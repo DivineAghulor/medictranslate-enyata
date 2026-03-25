@@ -82,50 +82,58 @@ export default function AppSidebar({
 
       <div className="flex-1 overflow-auto px-2 pb-4">
         <div className="space-y-1">
-          {threads.map((t, index) => {
-            const isActive = Boolean(activeThreadId && t.id === activeThreadId);
-            return (
-              <div
-                key={index}
-                className={cn(
-                  "group flex items-center gap-2 rounded-(--radius) px-2 py-2",
-                  isActive ? "bg-muted" : "hover:bg-muted/60",
-                )}
-              >
-                <button
-                  type="button"
-                  className="flex min-w-0 flex-1 items-center gap-2 text-left"
-                  onClick={() => router.push(`/app/${t.id}`)}
+          {threads.length == 0 ? (
+            <div className="px-4 pb-2 text-sm text-muted-foreground">
+              No conversations yet
+            </div>
+          ) : (
+            threads.map((t, index) => {
+              const isActive = Boolean(
+                activeThreadId && t.id === activeThreadId,
+              );
+              return (
+                <div
+                  key={index}
+                  className={cn(
+                    "group flex items-center gap-2 rounded-(--radius) px-2 py-2",
+                    isActive ? "bg-muted" : "hover:bg-muted/60",
+                  )}
                 >
-                  <MessageSquareText className="size-4 shrink-0 text-muted-foreground" />
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium">
-                      {t.title || "Untitled"}
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                    onClick={() => router.push(`/app/${t.id}`)}
+                  >
+                    <MessageSquareText className="size-4 shrink-0 text-muted-foreground" />
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium">
+                        {t.title || "Untitled"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {formatRelativeTime(t.updatedAt)}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {formatRelativeTime(t.updatedAt)}
-                    </div>
-                  </div>
-                </button>
+                  </button>
 
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  className="opacity-0 group-hover:opacity-100"
-                  onClick={() => {
-                    const nextId = deleteThread(t.id);
-                    if (t.id === activeThreadId) {
-                      router.push(nextId ? `/app/${nextId}` : "/app");
-                    }
-                  }}
-                  aria-label="Delete thread"
-                  title="Delete"
-                >
-                  <Trash2 className="size-4" />
-                </Button>
-              </div>
-            );
-          })}
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    className="opacity-0 group-hover:opacity-100"
+                    onClick={() => {
+                      const nextId = deleteThread(t.id);
+                      if (t.id === activeThreadId) {
+                        router.push(nextId ? `/app/${nextId}` : "/app");
+                      }
+                    }}
+                    aria-label="Delete thread"
+                    title="Delete"
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </aside>
