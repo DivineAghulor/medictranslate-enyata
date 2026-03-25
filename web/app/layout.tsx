@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
 import "./globals.css";
-
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
+import { dmSans } from "@/app/fonts";
 
 export const metadata: Metadata = {
   title: "MedicTranslate | Understand Your Lab Results",

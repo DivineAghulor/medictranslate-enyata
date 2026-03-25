@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { formatRelativeTime, useChatStore } from "@/components/app/chat-store";
+import { BrandLogo } from "@/components/BrandLogo";
 import {
   MessageSquareText,
   Plus,
@@ -37,9 +38,7 @@ export default function AppSidebar({
     >
       <div className="flex items-center justify-between gap-3 px-4 py-4">
         <Link href="/" className="inline-flex items-center gap-2">
-          <div className="grid size-9 place-items-center rounded-(--radius) bg-green-600 text-sm font-bold text-white">
-            M
-          </div>
+          <BrandLogo size={36} className="rounded-[var(--radius)]" />
           <div className="leading-tight">
             <div className="text-sm font-semibold tracking-tight">
               MedicTranslate

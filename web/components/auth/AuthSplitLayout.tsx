@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/BrandLogo";
 
 type AuthSplitLayoutProps = {
   /** Desktop placement only. Mobile always stacks hero on top, form below. */
@@ -21,12 +22,10 @@ export default function AuthSplitLayout({
 }: AuthSplitLayoutProps) {
   if (!showHero) {
     return (
-      <div className="min-h-dvh bg-white text-slate-900">
-        <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-10">
+        <div className="min-h-dvh bg-white text-slate-900">
+          <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-10">
           <Link href="/" className="mx-auto mb-8 inline-flex items-center gap-2">
-            <div className="grid size-10 place-items-center rounded-[var(--radius)] bg-green-600 text-lg font-bold text-white">
-              M
-            </div>
+            <BrandLogo size={40} className="rounded-[var(--radius)]" />
             <span className="text-lg font-semibold tracking-tight">
               MedicTranslate
             </span>
@@ -66,9 +65,7 @@ export default function AuthSplitLayout({
 
           <div className="relative z-10 px-6 pb-8 pt-10 md:px-10 md:pt-12">
             <Link href="/" className="inline-flex items-center gap-2">
-              <div className="grid size-10 place-items-center rounded-[var(--radius)] bg-green-600 text-lg font-bold text-white">
-                M
-              </div>
+              <BrandLogo size={40} className="rounded-[var(--radius)]" />
               <span className="text-lg font-semibold tracking-tight">
                 MedicTranslate
               </span>

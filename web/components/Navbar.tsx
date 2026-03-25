@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export default function Navbar() {
   return (
     <nav className="fixed w-full top-0 bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-(--radius) bg-green-600 flex items-center justify-center text-white font-bold text-xl">
-            M
-          </div>
+          <BrandLogo size={32} className="rounded-[var(--radius)]" />
           <span className="font-bold text-xl tracking-tight text-slate-900">
             MedicTranslate
           </span>
