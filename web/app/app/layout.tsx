@@ -1,7 +1,6 @@
-import React from "react";
+import type { ReactNode } from "react";
+import AppShell from "@/components/app/AppShell";
 
-const layout = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
-};
-
-export default layout;
+export default function AppLayout({ children }: { children: ReactNode }) {
+  return <AppShell>{children}</AppShell>;
+}
