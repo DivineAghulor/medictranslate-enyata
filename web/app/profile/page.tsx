@@ -42,9 +42,6 @@ export default function ProfilePage() {
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-            <div className="text-xs text-muted-foreground">
-              Changes here are UI-only for now.
-            </div>
             <Button
               type="button"
               className="bg-green-600 font-semibold text-white hover:bg-green-700"
