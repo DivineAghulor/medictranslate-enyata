@@ -37,7 +37,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
             <Link
               href="/profile"
-              className="rounded-[var(--radius)] border border-border bg-background px-3 py-2 text-sm hover:bg-muted"
+              className="rounded-(--radius) border border-border bg-background px-3 py-2 text-sm hover:bg-muted"
             >
               Profile
             </Link>
