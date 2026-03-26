@@ -5,4 +5,4 @@ anthropic
 supabase
 python-dotenv
 pydantic
-websockets==11.0.3
+websockets==10.4
