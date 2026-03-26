@@ -2,7 +2,8 @@ fastapi
 uvicorn
 python-multipart
 anthropic
-supabase
 python-dotenv
 pydantic
-websockets==10.4
+psycopg2-binary
+python-jose[cryptography]
+passlib[bcrypt]

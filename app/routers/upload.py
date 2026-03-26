@@ -33,7 +33,7 @@ async def analyze_file(file: UploadFile):
         raise HTTPException(status_code=422, detail=f"AI response schema validation failed: {e}")
 
     try:
-        lab_result_id = save_lab_result({"raw_image": "data:%s;base64,%s" % (mime_type, encoded)})
+        lab_result_id = save_lab_result({"raw_image": "data:%s;base64,%s" % (mime_type, encoded)}, user_id=None)
         save_ai_insight(lab_result_id, insight.dict())
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save insights: {e}")
