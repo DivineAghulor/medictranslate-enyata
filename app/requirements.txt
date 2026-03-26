@@ -7,5 +7,8 @@ pydantic
 psycopg2-binary
 python-jose[cryptography]
 passlib[bcrypt]
+requests
 pydantic[email]
 PyJWT
+requests
+base64

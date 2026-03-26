@@ -64,12 +64,12 @@ def get_user_by_email(email: str):
         cursor.close()
         conn.close()
 
-def create_user(email: str, hashed_password: str) -> str:
+def create_user(email: str, hashed_password: str, first_name: str, last_name: str, nin_verified: bool = False) -> str:
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        query = "INSERT INTO users (email, hashed_password) VALUES (%s, %s) RETURNING id"
-        cursor.execute(query, (email, hashed_password))
+        query = "INSERT INTO users (email, hashed_password, first_name, last_name, nin_verified) VALUES (%s, %s, %s, %s, %s) RETURNING id"
+        cursor.execute(query, (email, hashed_password, first_name, last_name, nin_verified))
         user_id = cursor.fetchone()[0]
         conn.commit()
         return str(user_id)

@@ -8,6 +8,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from models.schemas import UserCreate, UserLogin, UserResponse, Token
 from services.db_service import get_user_by_email, create_user
+from services.nin_verify import verify_nin_identity
 
 router = APIRouter()
 security = HTTPBearer()
@@ -56,7 +57,12 @@ async def signup(user: UserCreate):
     
     # Hash password and create user
     hashed = hash_password(user.password)
-    user_id = create_user(user.email, hashed)
+    nin_verified = verify_nin_identity(user.first_name, user.last_name, user.nin)
+
+    if not nin_verified:
+        raise HTTPException(status_code=400, detail="Invalid NIN")
+
+    user_id = create_user(user.email, hashed, user.first_name, user.last_name, nin_verified)
     
     # Create token
     access_token = create_access_token(data={"sub": user_id, "email": user.email})
