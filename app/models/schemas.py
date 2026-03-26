@@ -10,7 +10,7 @@ class LabInsight(BaseModel):
     next_steps: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "disclaimer": "I am not a doctor...",
                 "big_picture": "Overall your labs look...",
