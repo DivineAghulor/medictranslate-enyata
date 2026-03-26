@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -108,9 +108,6 @@ export default function NewConversationClient() {
       return [];
     });
   };
-
-  const filesToShow = useMemo(() => selectedFiles.slice(-3), [selectedFiles]);
-  const hiddenCount = Math.max(0, selectedFiles.length - filesToShow.length);
 
   const scrollToEnd = () => {
     requestAnimationFrame(() => {
@@ -320,77 +317,13 @@ export default function NewConversationClient() {
         </div>
       </section>
 
-      <section className="shrink-0 border-t border-border bg-background px-4 py-4">
-        <div className="mx-auto w-full max-w-3xl space-y-3">
-          <div className="rounded-(--radius) border border-border bg-card p-3">
-            <div
-              className={cn(
-                "flex flex-col gap-3 rounded-(--radius) border border-dashed px-4 py-4 transition-colors",
-                isDragging ? "border-green-400 bg-green-50" : "border-border",
-              )}
-              onClick={() => fileInputRef.current?.click()}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  fileInputRef.current?.click();
-                }
-              }}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  <div className="grid size-10 place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
-                    <FileUp className="size-5" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold">
-                      Upload lab results
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      PNG or JPG. Drag and drop or choose files.
-                    </div>
-                  </div>
-                </div>
-
-                <div className="shrink-0">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      fileInputRef.current?.click();
-                    }}
-                  >
-                    Choose files
-                  </Button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    accept="image/jpeg,image/png"
-                    multiple
-                    onChange={(e) => {
-                      addFiles(e.target.files);
-                      e.currentTarget.value = "";
-                    }}
-                  />
-                </div>
-              </div>
-
-              {selectedFiles.length > 0 ? (
-                <div className="flex items-center gap-2 overflow-x-auto">
-                  {hiddenCount > 0 && (
-                    <div
-                      className="shrink-0 rounded-(--radius) bg-muted px-3 py-2 text-xs font-medium text-muted-foreground"
-                      title={`${hiddenCount} more file${hiddenCount > 1 ? "s" : ""}`}
-                    >
-                      +{hiddenCount} more
-                    </div>
-                  )}
-
-                  {filesToShow.map((item) => (
+      <section className="flex-1 px-4 py-6">
+        <div className="mx-auto flex h-full w-full max-w-3xl items-center">
+          <div className="w-full space-y-3 rounded-(--radius) border bg-card p-4">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-thin pb-1">
+              {selectedFiles.length > 0 && (
+                <div className="flex items-center gap-2">
+                  {selectedFiles.map((item) => (
                     <div
                       key={item.id}
                       className="flex min-w-52.5 max-w-65 items-center gap-2 rounded-(--radius) bg-muted px-2 py-2"
@@ -438,62 +371,82 @@ export default function NewConversationClient() {
                       </Button>
                     </div>
                   ))}
-
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="shrink-0"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      clearAllFiles();
-                    }}
-                  >
-                    Clear all
-                  </Button>
                 </div>
-              ) : null}
+              )}
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto] md:items-end">
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-muted-foreground">
-                Optional: what should I focus on?
-              </label>
+            <div className="flex items-end justify-between gap-5 md:gap-10">
               <Textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="E.g., explain anything abnormal and what I should do next."
-                className="min-h-18"
+                className="max-h-24 resize-none rounded-none border-none p-0 text-sm outline-none"
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div
+              className="flex cursor-pointer items-center justify-between"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
+            >
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-3 rounded-(--radius) bg-gray-50 px-4 py-3 hover:bg-gray-100 min-w-52.5 max-w-full"
+              >
+                <div className="grid place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
+                  <FileUp className="size-5" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold">
+                    Upload lab results
+                  </div>
+                  <div className="text-xs text-muted-foreground">PNG & JPG</div>
+                </div>
+              </div>
+
               <Button
                 type="button"
-                className="w-full bg-green-600 font-semibold text-white hover:bg-green-700 md:w-auto"
-                onClick={submitAnalysis}
+                variant="ghost"
+                size="icon-lg"
+                aria-label="Analyze"
+                title="Analyze"
+                className="rounded-full bg-gray-100 text-green-900 hover:bg-gray-300"
                 disabled={!selectedFiles.length || isSubmitting}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  submitAnalysis();
+                }}
               >
                 {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 size-4 animate-spin" />
-                    Analyzing...
-                  </>
+                  <Loader2 className="size-5 animate-spin" />
                 ) : (
-                  <>
-                    <SendIcon className="mr-2 size-4" />
-                    Analyze
-                  </>
+                  <SendIcon className="size-5" />
                 )}
               </Button>
-            </div>
-          </div>
 
-          <div className="px-4 py-3 text-center text-xs text-muted-foreground">
-            MedicTranslate provides educational guidance, not medical advice.
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept="image/jpeg,image/png"
+                multiple
+                onChange={(e) => {
+                  addFiles(e.target.files);
+                  e.currentTarget.value = "";
+                }}
+              />
+            </div>
+
+            <div className="px-4 py-3 text-center text-xs text-muted-foreground">
+              MedicTranslate provides educational guidance, not medical advice.
+            </div>
           </div>
         </div>
       </section>

@@ -68,7 +68,6 @@ export default function ConversationClient({
     });
   };
 
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [thread?.messages.length]);
@@ -202,7 +201,6 @@ export default function ConversationClient({
             </div>
 
             <div
-              onClick={() => fileInputRef.current?.click()}
               className="flex cursor-pointer items-center justify-between"
               role="button"
               tabIndex={0}
@@ -213,7 +211,10 @@ export default function ConversationClient({
                 }
               }}
             >
-              <div className="px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-(--radius) flex items-center gap-3 min-w-52.5 max-w-full">
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-(--radius) flex items-center gap-3 min-w-52.5 max-w-full"
+              >
                 <div className="grid place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
                   <FileUp className="size-5" />
                 </div>
