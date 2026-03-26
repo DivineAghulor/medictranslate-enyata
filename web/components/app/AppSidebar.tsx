@@ -26,7 +26,7 @@ export default function AppSidebar({
   sidebarId?: string;
 }) {
   const router = useRouter();
-  const { threads, createThread, deleteThread } = useChatStore();
+  const { threads, deleteThread } = useChatStore();
 
   return (
     <aside
@@ -53,8 +53,7 @@ export default function AppSidebar({
           variant="outline"
           size="icon-sm"
           onClick={() => {
-            const id = createThread();
-            router.push(`/app/${id}`);
+            router.push(`/app/`);
             onNavigate?.();
           }}
           aria-label="New analysis"
