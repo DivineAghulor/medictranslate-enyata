@@ -11,6 +11,3 @@ pip-delete-this-directory.txt
 
 # Environment
 .env
-
-# Railway
-/railway.json
