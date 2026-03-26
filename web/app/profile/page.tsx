@@ -18,7 +18,7 @@ export default function ProfilePage() {
           </Button>
         </div>
 
-        <div className="mt-8 rounded-[var(--radius)] border border-border bg-card p-5">
+        <div className="mt-8 rounded-(--radius) border border-border bg-card p-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <label className="text-xs font-semibold text-muted-foreground">

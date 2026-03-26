@@ -38,7 +38,7 @@ export default function AppSidebar({
     >
       <div className="flex items-center justify-between gap-3 px-4 py-4">
         <Link href="/" className="inline-flex items-center gap-2">
-          <BrandLogo size={36} className="rounded-[var(--radius)]" />
+          <BrandLogo size={36} className="rounded-(--radius)" />
           <div className="leading-tight">
             <div className="text-sm font-semibold tracking-tight">
               MedicTranslate
