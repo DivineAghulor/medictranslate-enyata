@@ -12,7 +12,7 @@ import {
   FileText,
   Loader2,
 } from "lucide-react";
-import { isImageFile, makeId } from "@/utils/conversation";
+import { isImageFile } from "@/utils/conversation";
 import { SelectedFileItem } from "@/types/conversation";
 import {
   analyzeLabFile,
@@ -68,28 +68,28 @@ export default function NewConversationClient() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
+  const openFilePicker = () => {
+    const input = fileInputRef.current;
+    if (!input) return;
+    input.value = "";
+    if ("showPicker" in input && typeof input.showPicker === "function") {
+      input.showPicker();
+      return;
+    }
+    input.click();
+  };
+
   const addFiles = (incoming: FileList | null) => {
     if (!incoming || incoming.length === 0) return;
 
-    setSelectedFiles((prev) => {
-      const existing = new Map<string, SelectedFileItem>();
-      for (const item of prev) existing.set(item.id, item);
-
-      for (const file of Array.from(incoming)) {
-        const id = makeId(file);
-        if (!existing.has(id)) {
-          existing.set(id, {
-            id,
-            file,
-            previewUrl: isImageFile(file)
-              ? URL.createObjectURL(file)
-              : undefined,
-          });
-        }
-      }
-
-      return Array.from(existing.values());
-    });
+    setSelectedFiles((prev) => [
+      ...prev,
+      ...Array.from(incoming).map((file) => ({
+        id: newId(),
+        file,
+        previewUrl: isImageFile(file) ? URL.createObjectURL(file) : undefined,
+      })),
+    ]);
   };
 
   const removeFileById = (idToRemove: string) => {
@@ -388,15 +388,15 @@ export default function NewConversationClient() {
               className="flex cursor-pointer items-center justify-between"
               role="button"
               tabIndex={0}
+              onClick={openFilePicker}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  fileInputRef.current?.click();
+                  openFilePicker();
                 }
               }}
             >
               <div
-                onClick={() => fileInputRef.current?.click()}
                 className="flex items-center gap-3 rounded-(--radius) bg-gray-50 px-4 py-3 hover:bg-gray-100 min-w-52.5 max-w-full"
               >
                 <div className="grid place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
@@ -434,9 +434,12 @@ export default function NewConversationClient() {
               <input
                 ref={fileInputRef}
                 type="file"
-                className="hidden"
-                accept="image/jpeg,image/png"
+                className="sr-only"
+                accept="image/*"
                 multiple
+                onClick={(e) => {
+                  e.currentTarget.value = "";
+                }}
                 onChange={(e) => {
                   addFiles(e.target.files);
                   e.currentTarget.value = "";

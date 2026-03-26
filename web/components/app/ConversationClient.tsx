@@ -34,6 +34,17 @@ export default function ConversationClient({
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const openFilePicker = () => {
+    const input = fileInputRef.current;
+    if (!input) return;
+    input.value = "";
+    if ("showPicker" in input && typeof input.showPicker === "function") {
+      input.showPicker();
+      return;
+    }
+    input.click();
+  };
+
   const addFiles = (incoming: FileList | null) => {
     if (!incoming || incoming.length === 0) return;
 
@@ -204,15 +215,15 @@ export default function ConversationClient({
               className="flex cursor-pointer items-center justify-between"
               role="button"
               tabIndex={0}
+              onClick={openFilePicker}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  fileInputRef.current?.click();
+                  openFilePicker();
                 }
               }}
             >
               <div
-                onClick={() => fileInputRef.current?.click()}
                 className="px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-(--radius) flex items-center gap-3 min-w-52.5 max-w-full"
               >
                 <div className="grid place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
@@ -235,9 +246,12 @@ export default function ConversationClient({
               <input
                 ref={fileInputRef}
                 type="file"
-                className="hidden"
+                className="sr-only"
                 accept="application/pdf,image/*"
                 multiple
+                onClick={(e) => {
+                  e.currentTarget.value = "";
+                }}
                 onChange={(e) => {
                   addFiles(e.target.files);
                   e.currentTarget.value = "";
