@@ -6,6 +6,9 @@ from postgrest.exceptions import APIError
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+print(f"SUPABASE_URL: {SUPABASE_URL[:5] if SUPABASE_URL else None}...{SUPABASE_URL[-5:] if SUPABASE_URL else ''}")
+print(f"SUPABASE_KEY: {SUPABASE_KEY[:5] if SUPABASE_KEY else None}...{SUPABASE_KEY[-5:] if SUPABASE_KEY else ''}")
+
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise EnvironmentError("SUPABASE_URL and SUPABASE_KEY must be configured in environment variables")
 
