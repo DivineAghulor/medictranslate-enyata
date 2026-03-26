@@ -145,7 +145,7 @@ export default function ConversationClient({
       </section>
 
       <section className="flex-1 px-4 py-6">
-        <div className="mx-auto flex h-full w-full max-w-3xl items-center">
+        <div className="mx-auto grid h-full w-full max-w-3xl items-center">
           <div className="w-full space-y-3 rounded-(--radius) border bg-card p-4">
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-thin pb-1">
               {selectedFiles.length > 0 && (
@@ -258,6 +258,9 @@ export default function ConversationClient({
                 }}
               />
             </div>
+          </div>
+          <div className="px-4 py-3 text-center text-xs text-muted-foreground">
+            MedicTranslate provides educational guidance, not medical advice.
           </div>
         </div>
       </section>

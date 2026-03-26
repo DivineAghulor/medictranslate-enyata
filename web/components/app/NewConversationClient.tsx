@@ -318,7 +318,7 @@ export default function NewConversationClient() {
       </section>
 
       <section className="flex-1 px-4 py-6">
-        <div className="mx-auto flex h-full w-full max-w-3xl items-center">
+        <div className="mx-auto grid h-full w-full max-w-3xl items-center">
           <div className="w-full space-y-3 rounded-(--radius) border bg-card p-4">
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-thin pb-1">
               {selectedFiles.length > 0 && (
@@ -396,9 +396,7 @@ export default function NewConversationClient() {
                 }
               }}
             >
-              <div
-                className="flex items-center gap-3 rounded-(--radius) bg-gray-50 px-4 py-3 hover:bg-gray-100 min-w-52.5 max-w-full"
-              >
+              <div className="flex items-center gap-3 rounded-(--radius) bg-gray-50 px-4 py-3 hover:bg-gray-100 min-w-52.5 max-w-full">
                 <div className="grid place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
                   <FileUp className="size-5" />
                 </div>
@@ -446,10 +444,9 @@ export default function NewConversationClient() {
                 }}
               />
             </div>
-
-            <div className="px-4 py-3 text-center text-xs text-muted-foreground">
-              MedicTranslate provides educational guidance, not medical advice.
-            </div>
+          </div>
+          <div className="px-4 py-3 text-center text-xs text-muted-foreground">
+            MedicTranslate provides educational guidance, not medical advice.
           </div>
         </div>
       </section>
