@@ -1,10 +1,10 @@
 import ConversationClient from "@/components/app/ConversationClient";
 
-export default function ConversationPage({
+export default async function ConversationPage({
   params,
 }: {
-  params: { conversationId: string };
+  params: Promise<{ conversationId: string }>;
 }) {
-  const { conversationId } = params;
+  const { conversationId } = await params;
   return <ConversationClient conversationId={conversationId} />;
 }
