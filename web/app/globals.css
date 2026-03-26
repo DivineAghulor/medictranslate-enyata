@@ -144,3 +144,18 @@ body {
         @apply font-sans;
     }
 }
+
+/* In your global CSS file (e.g., globals.css) */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 3px; /* horizontal scrollbar height */
+  width: 3px;  /* vertical scrollbar width */
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #d1d5db; /* or any color */
+  border-radius: 999px;
+}
