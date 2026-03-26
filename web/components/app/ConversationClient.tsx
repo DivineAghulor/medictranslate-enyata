@@ -1,11 +1,13 @@
 "use client";
 
-import * as React from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useChatStore } from "@/components/app/chat-store";
-import { FileUp, Trash2 } from "lucide-react";
+import { FileText, FileUp, ImageIcon, SendIcon, Trash2 } from "lucide-react";
+import { SelectedFileItem } from "@/types/conversation";
+import { isImageFile, makeId } from "@/utils/conversation";
 
 export default function ConversationClient({
   conversationId,
@@ -14,35 +16,89 @@ export default function ConversationClient({
 }) {
   const { ensureThread, getThread, analyze } = useChatStore();
 
-  const [question, setQuestion] = React.useState("");
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = React.useState(false);
-  const [isDragging, setIsDragging] = React.useState(false);
+  const [question, setQuestion] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
-  const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     ensureThread(conversationId);
   }, [conversationId, ensureThread]);
 
   const thread = getThread(conversationId);
 
-  React.useEffect(() => {
+  const [prompt, setPrompt] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<SelectedFileItem[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const addFiles = (incoming: FileList | null) => {
+    if (!incoming || incoming.length === 0) return;
+
+    setSelectedFiles((prev) => {
+      const existing = new Map<string, SelectedFileItem>();
+      for (const item of prev) existing.set(item.id, item);
+
+      for (const file of Array.from(incoming)) {
+        const id = makeId(file);
+        if (!existing.has(id)) {
+          existing.set(id, {
+            id,
+            file,
+            previewUrl: isImageFile(file)
+              ? URL.createObjectURL(file)
+              : undefined,
+          });
+        }
+      }
+
+      return Array.from(existing.values());
+    });
+  };
+
+  const removeFileById = (idToRemove: string) => {
+    setSelectedFiles((prev) => {
+      const toRemove = prev.find((item) => item.id === idToRemove);
+      if (toRemove?.previewUrl) {
+        URL.revokeObjectURL(toRemove.previewUrl);
+      }
+      return prev.filter((item) => item.id !== idToRemove);
+    });
+  };
+
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [thread?.messages.length]);
 
-  async function runAnalyze() {
-    if (!selectedFile || !thread || isAnalyzing) return;
-    setIsAnalyzing(true);
-    analyze(conversationId, selectedFile, question);
-    setQuestion("");
-    setSelectedFile(null);
-    setIsAnalyzing(false);
-  }
-
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div
+      className={cn(
+        "flex min-h-0 flex-1 flex-col rounded-(--radius) border border-transparent transition-colors",
+        isDragging && "border-dashed border-green-400 bg-green-50/40",
+      )}
+      onDragEnter={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDragging(true);
+      }}
+      onDragLeave={(e) => {
+        e.preventDefault();
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          setIsDragging(false);
+        }
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        addFiles(e.dataTransfer.files);
+      }}
+    >
       <section className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-6">
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
           {(thread?.messages ?? []).map((m) => {
@@ -78,116 +134,115 @@ export default function ConversationClient({
         </div>
       </section>
 
-      <section className="shrink-0 border-t border-border bg-background px-4 py-4">
-        <div className="mx-auto w-full max-w-3xl space-y-3">
-          <div className="rounded-(--radius) border border-border bg-card p-3">
-            <div
-              className={cn(
-                "flex flex-col gap-3 rounded-(--radius) border border-dashed px-4 py-4 transition-colors",
-                isDragging ? "border-green-400 bg-green-50" : "border-border",
+      <section className="flex-1 px-4 py-6">
+        <div className="mx-auto flex h-full w-full max-w-3xl items-center">
+          <div className="w-full space-y-3 rounded-(--radius) border bg-card p-4">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-thin pb-1">
+              {selectedFiles.length > 0 && (
+                <div className="flex items-center gap-2">
+                  {selectedFiles.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex min-w-52.5 max-w-65 items-center gap-2 rounded-(--radius) bg-muted px-2 py-2"
+                    >
+                      <div className="relative size-12 shrink-0 overflow-hidden rounded-md bg-background">
+                        {item.previewUrl ? (
+                          <img
+                            src={item.previewUrl}
+                            alt={item.file.name}
+                            className="size-full object-cover"
+                          />
+                        ) : (
+                          <div className="grid size-full place-items-center text-muted-foreground">
+                            {item.file.type === "application/pdf" ? (
+                              <FileText className="size-5" />
+                            ) : (
+                              <ImageIcon className="size-5" />
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium">
+                          {item.file.name}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {(item.file.size / 1024).toFixed(0)} KB
+                        </div>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label={`Remove ${item.file.name}`}
+                        title="Remove"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removeFileById(item.id);
+                        }}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               )}
-              onDragEnter={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setIsDragging(false);
-                const file = e.dataTransfer.files?.[0];
-                if (file) setSelectedFile(file);
+            </div>
+
+            <div className="flex items-end justify-between gap-5 md:gap-10">
+              <Textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="E.g., explain anything abnormal and what I should do next."
+                className="max-h-24 resize-none rounded-none border-none p-0 text-sm outline-none"
+              />
+            </div>
+
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="flex cursor-pointer items-center justify-between"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
               }}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  <div className="grid size-10 place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
-                    <FileUp className="size-5" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold">
-                      Upload a lab result
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      PDF, JPG, or PNG. Drag and drop or choose a file.
-                    </div>
-                  </div>
+              <div className="px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-(--radius) flex items-center gap-3 min-w-52.5 max-w-full">
+                <div className="grid place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
+                  <FileUp className="size-5" />
                 </div>
-
-                <div className="shrink-0">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    Choose file
-                  </Button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    accept="application/pdf,image/*"
-                    onChange={(e) =>
-                      setSelectedFile(e.target.files?.[0] ?? null)
-                    }
-                  />
+                <div>
+                  <div className="text-sm font-semibold">
+                    Upload lab results
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    PDF & Images
+                  </div>
                 </div>
               </div>
 
-              {selectedFile ? (
-                <div className="flex flex-wrap items-center justify-between gap-2 rounded-(--radius) bg-muted px-3 py-2">
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium">
-                      {selectedFile.name}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {(selectedFile.size / 1024).toFixed(0)} KB
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => setSelectedFile(null)}
-                    aria-label="Remove file"
-                    title="Remove"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              ) : null}
-            </div>
-          </div>
+              <div className="color-white flex place-items-center items-center gap-2 rounded-full bg-gray-100 p-2 text-green-900 hover:bg-gray-300">
+                <SendIcon />
+              </div>
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto] md:items-end">
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-muted-foreground">
-                Optional: what should I focus on?
-              </label>
-              <Textarea
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="E.g., explain anything abnormal and what questions I should ask my doctor."
-                className="min-h-18"
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept="application/pdf,image/*"
+                multiple
+                onChange={(e) => {
+                  addFiles(e.target.files);
+                  e.currentTarget.value = "";
+                }}
               />
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                className="w-full bg-green-600 font-semibold text-white hover:bg-green-700 md:w-auto"
-                onClick={runAnalyze}
-                disabled={!selectedFile || !thread || isAnalyzing}
-              >
-                Analyze
-              </Button>
-            </div>
-          </div>
-
-          <div className="px-4 py-3 text-center text-xs text-muted-foreground">
-            MedicTranslate provides educational guidance, not medical advice.
           </div>
         </div>
       </section>

@@ -10,7 +10,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Textarea } from "../ui/textarea";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { isImageFile, makeId } from "@/utils/conversation";
 import { SelectedFileItem } from "@/types/conversation";
 
