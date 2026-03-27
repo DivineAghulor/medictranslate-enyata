@@ -31,7 +31,7 @@ def save_ai_insight(lab_result_id: str, insight_data: dict) -> str:
     cursor = conn.cursor()
     try:
         query = """
-            INSERT INTO ai_insights
+            INSERT INTO ai_insight
             (lab_result_id, disclaimer, big_picture, good_results, areas_of_attention, next_steps)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
