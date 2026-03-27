@@ -3,7 +3,7 @@
 import axios from "axios";
 import { backendUrl } from "../constants/geenral";
 
-const signup = async (
+export const signup = async (
   email: string,
   password: string,
   nin: string,
@@ -23,7 +23,7 @@ const signup = async (
   }
 };
 
-const login = async (email: string, password: string) => {
+export const login = async (email: string, password: string) => {
   try {
     await axios.post(`${backendUrl}/login`, {
       email,
