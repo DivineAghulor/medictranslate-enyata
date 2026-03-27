@@ -11,24 +11,27 @@ export const signup = async (
   last_name: string,
 ) => {
   try {
-    await axios.post(`${backendUrl}/login`, {
+    const res = await axios.post(`${backendUrl}/auth/signup`, {
       first_name,
       last_name,
       email,
       password,
       nin,
     });
+    console.log(`Res.data:`, res.data);
   } catch (err: any) {
+    console.error();
     throw new Error(err.response?.data?.message || err.message);
   }
 };
 
 export const login = async (email: string, password: string) => {
   try {
-    await axios.post(`${backendUrl}/login`, {
+    const res = await axios.post(`${backendUrl}/auth/login`, {
       email,
       password,
     });
+    console.log(res.data);
   } catch (err: any) {
     throw new Error(err.response?.data?.message || err.message);
   }

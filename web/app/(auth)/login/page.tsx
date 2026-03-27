@@ -1,21 +1,27 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
 import PasswordInput from "@/components/auth/PasswordInput";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { login } from "@/lib/actions/auth";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [values, setValues] = React.useState({
     email: "",
     password: "",
   });
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
   const [submitAttempted, setSubmitAttempted] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
+  const [isSubmitting, startTransition] = React.useTransition();
 
   const errors = React.useMemo(() => {
     const nextErrors: Record<string, string> = {};
@@ -39,6 +45,7 @@ export default function LoginPage() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitAttempted(true);
+    setFormError(null);
     setTouched({ email: true, password: true });
 
     const firstInvalidId = Object.keys(errors)[0];
@@ -47,7 +54,16 @@ export default function LoginPage() {
       return;
     }
 
-    // TODO: wire up sign-in action
+    startTransition(() => {
+      void (async () => {
+        try {
+          await login(values.email.trim(), values.password);
+          router.push("/app");
+        } catch (err) {
+          setFormError(err instanceof Error ? err.message : "Login failed.");
+        }
+      })();
+    });
   }
 
   return (
@@ -57,6 +73,13 @@ export default function LoginPage() {
       description="Welcome back. Enter your details to continue."
     >
       <form className="space-y-5" noValidate onSubmit={handleSubmit}>
+        {formError ? (
+          <Alert variant="destructive">
+            <AlertTitle>Sign-in failed</AlertTitle>
+            <AlertDescription>{formError}</AlertDescription>
+          </Alert>
+        ) : null}
+
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -121,8 +144,9 @@ export default function LoginPage() {
         <Button
           type="submit"
           className="w-full bg-green-600 text-lg font-semibold text-white shadow-lg transition-all hover:-translate-y-px hover:bg-green-700 hover:shadow-xl"
+          disabled={isSubmitting}
         >
-          Sign in
+          {isSubmitting ? "Signing in..." : "Sign in"}
         </Button>
 
         <p className="text-center text-sm text-slate-600">
