@@ -71,7 +71,7 @@ async def signup(user: UserCreate):
     
     # Create token
     access_token = create_access_token(data={"sub": user_id, "email": user.email})
-    return {"access_token": access_token, "token_type": "bearer", "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60}
+    return {"access_token": access_token, "token_type": "bearer", "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60, "email": user.email}
 
 @router.post("/auth/login", response_model=Token)
 async def login(user: UserLogin):
@@ -82,4 +82,4 @@ async def login(user: UserLogin):
     
     # Create token
     access_token = create_access_token(data={"sub": str(db_user["user_id"]), "email": db_user["email"]})
-    return {"access_token": access_token, "token_type": "bearer", "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60}
+    return {"access_token": access_token, "token_type": "bearer", "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60, "email": db_user["email"]}
