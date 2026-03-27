@@ -8,6 +8,11 @@ Built for the [Buildathon by Enyata](https://buildathon.enyata.com/), the projec
 
 ---
 
+
+## Contibutors
+1. Fisayo Obadina (Frontend Developer) [LinkedIn](https://linkedin.com/in/fisayobadina) 
+2. Divine Aghulor (Backend Developer) [LinkedIn](https://www.linkedin.com/in/divine-aghulor-680544299/)
+
 ## 🌍 Problem
 
 Many people receive lab reports that are difficult to interpret without medical training.  
