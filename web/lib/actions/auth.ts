@@ -1,7 +1,7 @@
 "use server";
 
 import axios from "axios";
-import { backendUrl } from "../constants/geenral";
+import { backendUrl } from "../constants/general";
 
 export const signup = async (
   email: string,

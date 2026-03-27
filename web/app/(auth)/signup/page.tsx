@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
 import PasswordInput from "@/components/auth/PasswordInput";
@@ -8,8 +9,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signup } from "@/lib/actions/auth";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [values, setValues] = React.useState({
     firstName: "",
     lastName: "",
@@ -19,6 +22,9 @@ export default function SignupPage() {
   });
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
   const [submitAttempted, setSubmitAttempted] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
+  const [formSuccess, setFormSuccess] = React.useState<string | null>(null);
+  const [isSubmitting, startTransition] = React.useTransition();
 
   const errors = React.useMemo(() => {
     const nextErrors: Record<string, string> = {};
@@ -51,6 +57,8 @@ export default function SignupPage() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitAttempted(true);
+    setFormError(null);
+    setFormSuccess(null);
     setTouched({
       firstName: true,
       lastName: true,
@@ -65,7 +73,23 @@ export default function SignupPage() {
       return;
     }
 
-    // TODO: wire up create-account action
+    startTransition(() => {
+      void (async () => {
+        try {
+          await signup(
+            values.email.trim(),
+            values.password,
+            values.nin.trim(),
+            values.firstName.trim(),
+            values.lastName.trim(),
+          );
+          setFormSuccess("Account created. You can now sign in.");
+          router.push("/login");
+        } catch (err) {
+          setFormError(err instanceof Error ? err.message : "Signup failed.");
+        }
+      })();
+    });
   }
 
   return (
@@ -75,6 +99,22 @@ export default function SignupPage() {
       description="Enter your details to get started."
     >
       <div className="space-y-5">
+        {formError ? (
+          <Alert variant="destructive">
+            <AlertTitle>Signup failed</AlertTitle>
+            <AlertDescription>{formError}</AlertDescription>
+          </Alert>
+        ) : null}
+
+        {formSuccess ? (
+          <Alert className="border-green-200 bg-green-50">
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription className="text-slate-600">
+              {formSuccess}
+            </AlertDescription>
+          </Alert>
+        ) : null}
+
         <Alert className="border-green-200 bg-green-50 p-4">
           <AlertTitle className="text-slate-900">Important</AlertTitle>
           <AlertDescription className="text-slate-600">
@@ -234,8 +274,9 @@ export default function SignupPage() {
           <Button
             type="submit"
             className="w-full bg-green-600 text-lg font-semibold text-white shadow-lg transition-all hover:-translate-y-px hover:bg-green-700 hover:shadow-xl"
+            disabled={isSubmitting}
           >
-            Create account
+            {isSubmitting ? "Creating account..." : "Create account"}
           </Button>
         </form>
 
