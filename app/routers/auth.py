@@ -81,5 +81,5 @@ async def login(user: UserLogin):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Create token
-    access_token = create_access_token(data={"sub": str(db_user["id"]), "email": db_user["email"]})
+    access_token = create_access_token(data={"sub": str(db_user["user_id"]), "email": db_user["email"]})
     return {"access_token": access_token, "token_type": "bearer", "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60}
