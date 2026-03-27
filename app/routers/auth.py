@@ -59,8 +59,8 @@ async def signup(user: UserCreate):
     hashed = hash_password(user.password)
     nin_verified = verify_nin_identity(user.first_name, user.last_name, user.nin)
 
-    if not nin_verified:
-        raise HTTPException(status_code=400, detail="Invalid NIN")
+    # if not nin_verified:
+    #     raise HTTPException(status_code=400, detail="Invalid NIN")
 
     user_id = create_user(user.email, hashed, user.first_name, user.last_name, nin_verified)
     

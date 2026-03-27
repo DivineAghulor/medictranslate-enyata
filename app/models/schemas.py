@@ -24,6 +24,9 @@ class LabInsight(BaseModel):
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+    first_name: str
+    last_name: str
+    nin: str
 
 
 class UserLogin(BaseModel):

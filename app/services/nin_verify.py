@@ -5,14 +5,13 @@ import requests
 
 def get_nin_api_token() -> str:
     """Get OAuth token from NIN provider via client_credentials grant."""
-    api_base = os.getenv("NIN_API_BASE_URL")
-    client_id = os.getenv("NIN_CLIENT_ID")
-    client_secret = os.getenv("NIN_CLIENT_SECRET")
+    client_id = os.getenv("INTERSWITCH_CLIENT_ID")
+    client_secret = os.getenv("INTERSWITCH_CLIENT_SECRET")
 
-    if not api_base or not client_id or not client_secret:
-        raise EnvironmentError("NIN_API_BASE_URL, NIN_CLIENT_ID, and NIN_CLIENT_SECRET must be set")
+    if not client_id or not client_secret:
+        raise EnvironmentError("NIN_API_BASE_URL, INTERSWITCH_CLIENT_ID, and INTERSWITCH_CLIENT_SECRET must be set")
 
-    token_url = api_base.rstrip("/") + "/oauth/token"
+    token_url = "https://passport-v2.k8.isw.la/passport/oauth/token"
     auth_header = base64.b64encode(f"{client_id}:{client_secret}".encode("utf-8")).decode("utf-8")
 
     headers = {
@@ -40,16 +39,13 @@ def verify_nin_identity(first_name: str, last_name: str, nin: str) -> bool:
     if not (first_name and last_name and nin):
         return False
 
-    api_base = os.getenv("NIN_API_BASE_URL")
-    if not api_base:
-        raise EnvironmentError("NIN_API_BASE_URL must be set")
 
     try:
         token = get_nin_api_token()
     except Exception:
         return False
 
-    verify_url = api_base.rstrip("/") + "/verify/identity/nin"
+    verify_url = "https://api-marketplace-routing.k8.isw.la/marketplace-routing/api/v1/verify/identity/nin"
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
