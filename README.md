@@ -52,7 +52,7 @@ MedicTranslate provides a simple workflow:
 
 ```medictranslate-enyata/README.md#L1-10
 medictranslate-enyata/
-├── api/          # Backend/API services (currently scaffolded)
+├── api/          # Backend/API services (FastAPI)
 └── web/          # Frontend web application (Next.js)
 ```
 
@@ -67,7 +67,7 @@ medictranslate-enyata/
 - Tailwind CSS
 
 ### Backend (`api`)
-- Directory exists and is ready for implementation of OCR/analysis/API logic.
+- FastAPI (python)
 
 ---
 

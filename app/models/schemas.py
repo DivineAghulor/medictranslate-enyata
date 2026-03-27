@@ -1,5 +1,5 @@
-from typing import Any, List
-from pydantic import BaseModel
+from typing import Any, List, Optional
+from pydantic import BaseModel, EmailStr
 
 
 class LabInsight(BaseModel):
@@ -10,7 +10,7 @@ class LabInsight(BaseModel):
     next_steps: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "disclaimer": "I am not a doctor...",
                 "big_picture": "Overall your labs look...",
@@ -19,3 +19,34 @@ class LabInsight(BaseModel):
                 "next_steps": "Discuss with your physician...",
             }
         }
+
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    first_name: str
+    last_name: str
+    nin: str
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    created_at: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    expires_in: int
+    email: str
+
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+    user_id: Optional[str] = None
