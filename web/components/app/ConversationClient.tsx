@@ -5,7 +5,14 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useChatStore } from "@/components/app/chat-store";
-import { FileText, FileUp, ImageIcon, SendIcon, Trash2 } from "lucide-react";
+import {
+  FileText,
+  FileUp,
+  ImageIcon,
+  SendIcon,
+  Trash2,
+  Loader2,
+} from "lucide-react";
 import { SelectedFileItem } from "@/types/conversation";
 import { isImageFile, makeId } from "@/utils/conversation";
 
@@ -16,23 +23,23 @@ export default function ConversationClient({
 }) {
   const { ensureThread, getThread, analyze } = useChatStore();
 
-  const [question, setQuestion] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const thread = getThread(conversationId);
 
+  const [prompt, setPrompt] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<SelectedFileItem[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     ensureThread(conversationId);
   }, [conversationId, ensureThread]);
 
-  const thread = getThread(conversationId);
-
-  const [prompt, setPrompt] = useState("");
-  const [selectedFiles, setSelectedFiles] = useState<SelectedFileItem[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [thread?.messages.length]);
 
   const openFilePicker = () => {
     const input = fileInputRef.current;
@@ -79,9 +86,35 @@ export default function ConversationClient({
     });
   };
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [thread?.messages.length]);
+  const clearAllFiles = () => {
+    setSelectedFiles((prev) => {
+      for (const item of prev) {
+        if (item.previewUrl) {
+          URL.revokeObjectURL(item.previewUrl);
+        }
+      }
+      return [];
+    });
+  };
+
+  const submitAnalysis = async () => {
+    if (!selectedFiles.length || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const filesToAnalyze = [...selectedFiles];
+      const question = prompt.trim();
+
+      for (const item of filesToAnalyze) {
+        analyze(conversationId, item.file, question);
+      }
+
+      clearAllFiles();
+      setPrompt("");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div
@@ -211,20 +244,18 @@ export default function ConversationClient({
               />
             </div>
 
-            <div
-              className="flex cursor-pointer items-center justify-between"
-              role="button"
-              tabIndex={0}
-              onClick={openFilePicker}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  openFilePicker();
-                }
-              }}
-            >
+            <div className="flex items-center justify-between">
               <div
-                className="px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-(--radius) flex items-center gap-3 min-w-52.5 max-w-full"
+                className="min-w-52.5 max-w-full rounded-(--radius) bg-gray-50 px-4 py-3 hover:bg-gray-100 flex items-center gap-3 cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onClick={openFilePicker}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openFilePicker();
+                  }
+                }}
               >
                 <div className="grid place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
                   <FileUp className="size-5" />
@@ -239,9 +270,26 @@ export default function ConversationClient({
                 </div>
               </div>
 
-              <div className="color-white flex place-items-center items-center gap-2 rounded-full bg-gray-100 p-2 text-green-900 hover:bg-gray-300">
-                <SendIcon />
-              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-lg"
+                aria-label="Analyze"
+                title="Analyze"
+                className="rounded-full bg-gray-100 text-green-900 hover:bg-gray-300"
+                disabled={!selectedFiles.length || isSubmitting}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  submitAnalysis();
+                }}
+              >
+                {isSubmitting ? (
+                  <Loader2 className="size-5 animate-spin" />
+                ) : (
+                  <SendIcon className="size-5" />
+                )}
+              </Button>
 
               <input
                 ref={fileInputRef}

@@ -14,10 +14,8 @@ import {
 } from "lucide-react";
 import { isImageFile } from "@/utils/conversation";
 import { SelectedFileItem } from "@/types/conversation";
-import {
-  analyzeLabFile,
-  type LabInsight,
-} from "@/lib/actions/analyze-lab-file";
+import { analyzeLabFile } from "@/lib/actions/analyze-lab-file";
+import { type LabInsight } from "@/types/analysis";
 
 type RenderableContent =
   | { kind: "text"; text: string }
@@ -71,11 +69,8 @@ export default function NewConversationClient() {
   const openFilePicker = () => {
     const input = fileInputRef.current;
     if (!input) return;
+  
     input.value = "";
-    if ("showPicker" in input && typeof input.showPicker === "function") {
-      input.showPicker();
-      return;
-    }
     input.click();
   };
 
@@ -384,19 +379,19 @@ export default function NewConversationClient() {
               />
             </div>
 
-            <div
-              className="flex cursor-pointer items-center justify-between"
-              role="button"
-              tabIndex={0}
-              onClick={openFilePicker}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  openFilePicker();
-                }
-              }}
-            >
-              <div className="flex items-center gap-3 rounded-(--radius) bg-gray-50 px-4 py-3 hover:bg-gray-100 min-w-52.5 max-w-full">
+            <div className="flex items-center justify-between">
+              <div
+                className="flex cursor-pointer items-center gap-3 rounded-(--radius) bg-gray-50 px-4 py-3 hover:bg-gray-100 min-w-52.5 max-w-full"
+                role="button"
+                tabIndex={0}
+                onClick={openFilePicker}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openFilePicker();
+                  }
+                }}
+              >
                 <div className="grid place-items-center rounded-(--radius) bg-green-600/10 text-green-700">
                   <FileUp className="size-5" />
                 </div>
@@ -439,8 +434,10 @@ export default function NewConversationClient() {
                   e.currentTarget.value = "";
                 }}
                 onChange={(e) => {
-                  addFiles(e.target.files);
-                  e.currentTarget.value = "";
+                  const files = e.target.files;
+                  addFiles(files);
+                
+                  e.target.value = "";
                 }}
               />
             </div>
