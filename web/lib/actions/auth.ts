@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { backendUrl } from "../constants/general";
+import { normalizeAuthError } from "@/utils/auth";
 
 export const signup = async (
   email: string,
@@ -11,28 +12,29 @@ export const signup = async (
   last_name: string,
 ) => {
   try {
-    const res = await axios.post(`${backendUrl}/auth/signup`, {
+    if (!backendUrl) throw new Error("Backend URL is not configured.");
+
+    await axios.post(`${backendUrl}/auth/signup`, {
       first_name,
       last_name,
       email,
       password,
       nin,
     });
-    console.log(`Res.data:`, res.data);
-  } catch (err: any) {
-    console.error();
-    throw new Error(err.response?.data?.message || err.message);
+  } catch (err: unknown) {
+    throw new Error(normalizeAuthError(err));
   }
 };
 
 export const login = async (email: string, password: string) => {
   try {
-    const res = await axios.post(`${backendUrl}/auth/login`, {
+    if (!backendUrl) throw new Error("Backend URL is not configured.");
+
+    await axios.post(`${backendUrl}/auth/login`, {
       email,
       password,
     });
-    console.log(res.data);
-  } catch (err: any) {
-    throw new Error(err.response?.data?.message || err.message);
+  } catch (err: unknown) {
+    throw new Error(normalizeAuthError(err));
   }
 };

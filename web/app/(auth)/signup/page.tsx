@@ -29,7 +29,8 @@ export default function SignupPage() {
   const errors = React.useMemo(() => {
     const nextErrors: Record<string, string> = {};
 
-    if (!values.firstName.trim()) nextErrors.firstName = "First name is required.";
+    if (!values.firstName.trim())
+      nextErrors.firstName = "First name is required.";
     if (!values.lastName.trim()) nextErrors.lastName = "Last name is required.";
 
     const nin = values.nin.trim();
@@ -50,8 +51,8 @@ export default function SignupPage() {
 
   const showError = React.useCallback(
     (name: keyof typeof values) =>
-      (submitAttempted || touched[name]) ? errors[name] : undefined,
-    [errors, submitAttempted, touched]
+      submitAttempted || touched[name] ? errors[name] : undefined,
+    [errors, submitAttempted, touched],
   );
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -99,13 +100,6 @@ export default function SignupPage() {
       description="Enter your details to get started."
     >
       <div className="space-y-5">
-        {formError ? (
-          <Alert variant="destructive">
-            <AlertTitle>Signup failed</AlertTitle>
-            <AlertDescription>{formError}</AlertDescription>
-          </Alert>
-        ) : null}
-
         {formSuccess ? (
           <Alert className="border-green-200 bg-green-50">
             <AlertTitle>Success</AlertTitle>
@@ -165,7 +159,10 @@ export default function SignupPage() {
                 placeholder="Doe"
                 value={values.lastName}
                 onChange={(event) =>
-                  setValues((prev) => ({ ...prev, lastName: event.target.value }))
+                  setValues((prev) => ({
+                    ...prev,
+                    lastName: event.target.value,
+                  }))
                 }
                 onBlur={() =>
                   setTouched((prev) => ({ ...prev, lastName: true }))
@@ -207,7 +204,11 @@ export default function SignupPage() {
               aria-describedby={showError("nin") ? "nin-error" : undefined}
             />
             {showError("nin") ? (
-              <p id="nin-error" className="text-xs text-destructive" role="alert">
+              <p
+                id="nin-error"
+                className="text-xs text-destructive"
+                role="alert"
+              >
                 {showError("nin")}
               </p>
             ) : null}
@@ -252,9 +253,7 @@ export default function SignupPage() {
               onChange={(event) =>
                 setValues((prev) => ({ ...prev, password: event.target.value }))
               }
-              onBlur={() =>
-                setTouched((prev) => ({ ...prev, password: true }))
-              }
+              onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
               aria-invalid={Boolean(showError("password"))}
               aria-describedby={
                 showError("password") ? "password-error" : undefined
@@ -270,7 +269,12 @@ export default function SignupPage() {
               </p>
             ) : null}
           </div>
-
+          {formError ? (
+            <Alert variant="destructive">
+              <AlertTitle>Signup failed</AlertTitle>
+              <AlertDescription>{formError}</AlertDescription>
+            </Alert>
+          ) : null}
           <Button
             type="submit"
             className="w-full bg-green-600 text-lg font-semibold text-white shadow-lg transition-all hover:-translate-y-px hover:bg-green-700 hover:shadow-xl"

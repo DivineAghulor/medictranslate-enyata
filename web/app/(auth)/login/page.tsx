@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import * as React from "react";
+import { useMemo, useCallback, useState, useTransition } from "react";
 import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -14,16 +14,16 @@ import { login } from "@/lib/actions/auth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [values, setValues] = React.useState({
+  const [values, setValues] = useState({
     email: "",
     password: "",
   });
-  const [touched, setTouched] = React.useState<Record<string, boolean>>({});
-  const [submitAttempted, setSubmitAttempted] = React.useState(false);
-  const [formError, setFormError] = React.useState<string | null>(null);
-  const [isSubmitting, startTransition] = React.useTransition();
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, startTransition] = useTransition();
 
-  const errors = React.useMemo(() => {
+  const errors = useMemo(() => {
     const nextErrors: Record<string, string> = {};
 
     const email = values.email.trim();
@@ -36,13 +36,13 @@ export default function LoginPage() {
     return nextErrors;
   }, [values]);
 
-  const showError = React.useCallback(
+  const showError = useCallback(
     (name: keyof typeof values) =>
-      (submitAttempted || touched[name]) ? errors[name] : undefined,
-    [errors, submitAttempted, touched]
+      submitAttempted || touched[name] ? errors[name] : undefined,
+    [errors, submitAttempted, touched],
   );
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitAttempted(true);
     setFormError(null);
@@ -73,13 +73,6 @@ export default function LoginPage() {
       description="Welcome back. Enter your details to continue."
     >
       <form className="space-y-5" noValidate onSubmit={handleSubmit}>
-        {formError ? (
-          <Alert variant="destructive">
-            <AlertTitle>Sign-in failed</AlertTitle>
-            <AlertDescription>{formError}</AlertDescription>
-          </Alert>
-        ) : null}
-
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -140,6 +133,13 @@ export default function LoginPage() {
           </label>
           <span className="text-sm text-slate-500">Forgot password?</span>
         </div>
+
+        {formError ? (
+          <Alert variant="destructive">
+            <AlertTitle>Sign-in failed</AlertTitle>
+            <AlertDescription>{formError}</AlertDescription>
+          </Alert>
+        ) : null}
 
         <Button
           type="submit"
