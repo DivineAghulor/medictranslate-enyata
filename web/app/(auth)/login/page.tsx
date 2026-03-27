@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useCallback, useState, useTransition } from "react";
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
 import PasswordInput from "@/components/auth/PasswordInput";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -11,6 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/lib/actions/auth";
+import { hasLoggedUser, setLoggedUser } from "@/utils/loggedUser";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,6 +30,12 @@ export default function LoginPage() {
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (hasLoggedUser()) {
+      router.replace("/app");
+    }
+  }, [router]);
 
   const errors = useMemo(() => {
     const nextErrors: Record<string, string> = {};
@@ -58,6 +72,10 @@ export default function LoginPage() {
       void (async () => {
         try {
           await login(values.email.trim(), values.password);
+          setLoggedUser({
+            email: values.email.trim(),
+            password: values.password,
+          });
           router.push("/app");
         } catch (err) {
           setFormError(err instanceof Error ? err.message : "Login failed.");
