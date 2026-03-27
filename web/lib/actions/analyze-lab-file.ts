@@ -1,27 +1,14 @@
 "use server";
 
-export type LabInsight = {
-  disclaimer: string;
-  big_picture: string;
-  good_results: unknown[];
-  areas_of_attention: unknown[];
-  next_steps: string;
-};
-
-export type AnalyzeLabFileSuccess = {
-  ok: true;
-  data: LabInsight;
-};
-
-export type AnalyzeLabFileError = {
-  ok: false;
-  status: number;
-  message: string;
-};
+import {
+  AnalyzeLabFileError,
+  AnalyzeLabFileSuccess,
+  LabInsight,
+} from "@/types/analysis";
 
 export type AnalyzeLabFileResult = AnalyzeLabFileSuccess | AnalyzeLabFileError;
 
-const BACKEND_BASE_URL = "https://medictranslate-enyata-production.up.railway.app";
+const BACKEND_BASE_URL = process.env.NEXT_BACKEND_URL;
 const ANALYZE_ENDPOINT = `${BACKEND_BASE_URL}/analyze`;
 const MAX_FILE_BYTES = 2_097_152;
 const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png"]);
@@ -42,30 +29,47 @@ function normalizeInsight(input: unknown): LabInsight {
 }
 
 function normalizeErrorMessage(status: number, payload: unknown): string {
-  if (payload && typeof payload === "object" && "detail" in (payload as Record<string, unknown>)) {
+  if (
+    payload &&
+    typeof payload === "object" &&
+    "detail" in (payload as Record<string, unknown>)
+  ) {
     const detail = (payload as Record<string, unknown>).detail;
     if (typeof detail === "string") return detail;
     if (Array.isArray(detail)) return detail.map(String).join(", ");
   }
 
   if (status === 413) return "File too large. Maximum allowed size is 2MB.";
-  if (status === 400) return "Invalid file type. Only JPEG and PNG are supported.";
-  if (status === 422) return "Unable to process this lab file. Please try another image.";
-  if (status >= 500) return "Server error while analyzing file. Please try again.";
+  if (status === 400)
+    return "Invalid file type. Only JPEG and PNG are supported.";
+  if (status === 422)
+    return "Unable to process this lab file. Please try another image.";
+  if (status >= 500)
+    return "Server error while analyzing file. Please try again.";
   return "Failed to analyze file.";
 }
 
-export async function analyzeLabFile(file: File): Promise<AnalyzeLabFileResult> {
+export async function analyzeLabFile(
+  file: File,
+): Promise<AnalyzeLabFileResult> {
   if (!file) {
     return { ok: false, status: 400, message: "No file provided." };
   }
 
   if (file.size > MAX_FILE_BYTES) {
-    return { ok: false, status: 413, message: "File too large. Maximum allowed size is 2MB." };
+    return {
+      ok: false,
+      status: 413,
+      message: "File too large. Maximum allowed size is 2MB.",
+    };
   }
 
   if (!ALLOWED_MIME_TYPES.has(file.type)) {
-    return { ok: false, status: 400, message: "Invalid file type. Only JPEG and PNG are supported." };
+    return {
+      ok: false,
+      status: 400,
+      message: "Invalid file type. Only JPEG and PNG are supported.",
+    };
   }
 
   try {
