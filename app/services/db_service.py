@@ -68,7 +68,7 @@ def create_user(email: str, hashed_password: str, first_name: str, last_name: st
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        query = "INSERT INTO users (email, hashed_password, first_name, last_name, nin_verified) VALUES (%s, %s, %s, %s, %s) RETURNING id"
+        query = "INSERT INTO users (email, hashed_password, first_name, last_name, nin_verified) VALUES (%s, %s, %s, %s, %s) RETURNING user_id"
         cursor.execute(query, (email, hashed_password, first_name, last_name, nin_verified))
         user_id = cursor.fetchone()[0]
         conn.commit()
