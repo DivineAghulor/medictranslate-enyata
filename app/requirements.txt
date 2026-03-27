@@ -11,4 +11,3 @@ requests
 pydantic[email]
 PyJWT
 requests
-base64
