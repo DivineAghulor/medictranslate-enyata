@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signup } from "@/lib/actions/auth";
-import { hasLoggedUser, setLoggedUser } from "@/utils/loggedUser";
+import { setLoggedUser } from "@/utils/loggedUser";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -26,12 +26,6 @@ export default function SignupPage() {
   const [formError, setFormError] = React.useState<string | null>(null);
   const [formSuccess, setFormSuccess] = React.useState<string | null>(null);
   const [isSubmitting, startTransition] = React.useTransition();
-
-  React.useEffect(() => {
-    if (hasLoggedUser()) {
-      router.replace("/app");
-    }
-  }, [router]);
 
   const errors = React.useMemo(() => {
     const nextErrors: Record<string, string> = {};

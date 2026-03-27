@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
   type FormEvent,
   useCallback,
-  useEffect,
   useMemo,
   useState,
   useTransition,
@@ -18,7 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/lib/actions/auth";
-import { hasLoggedUser, setLoggedUser } from "@/utils/loggedUser";
+import { setLoggedUser } from "@/utils/loggedUser";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,12 +29,6 @@ export default function LoginPage() {
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, startTransition] = useTransition();
-
-  useEffect(() => {
-    if (hasLoggedUser()) {
-      router.replace("/app");
-    }
-  }, [router]);
 
   const errors = useMemo(() => {
     const nextErrors: Record<string, string> = {};
