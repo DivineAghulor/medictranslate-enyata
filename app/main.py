@@ -1,9 +1,13 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
+
 
 from routers.upload import router as upload_router
+from routers.auth import router as auth_router
 
 load_dotenv()  # load env vars from .env
 
@@ -20,6 +24,7 @@ app.add_middleware(
 )
 
 app.include_router(upload_router, prefix="", tags=["upload"])
+app.include_router(auth_router, prefix="", tags=["auth"])
 
 
 @app.get("/health")

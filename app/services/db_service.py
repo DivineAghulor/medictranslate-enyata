@@ -1,54 +1,81 @@
 import os
-from supabase import create_client, Client
-from postgrest.exceptions import APIError
+import json
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise EnvironmentError("DATABASE_URL must be set")
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+def get_connection():
+    return psycopg2.connect(DATABASE_URL)
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise EnvironmentError("SUPABASE_URL and SUPABASE_KEY must be configured in environment variables")
-
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-
-def save_lab_result(raw_json: dict) -> str:
-    """Insert raw lab result and return inserted row id."""
+def save_lab_result(raw_json: dict, user_id: str = None) -> str:
+    conn = get_connection()
+    cursor = conn.cursor()
     try:
-        # Remove .select() and .single()
-        response = supabase.table("lab_results").insert({"raw_json": raw_json}).execute()
-        
-        # .data is a list of inserted rows. We want the first one.
-        if response.data:
-            return response.data[0]["id"]
-        raise RuntimeError("No data returned after saving lab_result")
-        
-    except APIError as e:
-        raise RuntimeError(f"Database error saving lab_result: {e.message}")
+        query = "INSERT INTO lab_results (raw_json, user_id) VALUES (%s, %s) RETURNING id"
+        cursor.execute(query, (json.dumps(raw_json), user_id))
+        result_id = cursor.fetchone()[0]
+        conn.commit()
+        return str(result_id)
     except Exception as e:
-        raise RuntimeError(f"Unexpected error saving lab_result: {str(e)}")
-
+        conn.rollback()
+        raise RuntimeError(f"DB error: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 def save_ai_insight(lab_result_id: str, insight_data: dict) -> str:
-    """Insert AI insight with reference to lab_result_id."""
-    payload = {
-        "lab_result_id": lab_result_id,
-        "disclaimer": insight_data.get("disclaimer"),
-        "big_picture": insight_data.get("big_picture"),
-        "good_results": insight_data.get("good_results"),
-        "areas_of_attention": insight_data.get("areas_of_attention"),
-        "next_steps": insight_data.get("next_steps"),
-    }
-    
+    conn = get_connection()
+    cursor = conn.cursor()
     try:
-        # Simplified chain
-        response = supabase.table("ai_insights").insert(payload).execute()
-        
-        if response.data:
-            return response.data[0]["id"]
-        raise RuntimeError("No data returned after saving ai_insight")
-        
-    except APIError as e:
-        raise RuntimeError(f"Database error saving ai_insight: {e.message}")
+        query = """
+            INSERT INTO ai_insight
+            (lab_result_id, disclaimer, big_picture, good_results, areas_of_attention, next_steps)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id
+        """
+        cursor.execute(query, (
+            lab_result_id,
+            insight_data.get("disclaimer"),
+            insight_data.get("big_picture"),
+            json.dumps(insight_data.get("good_results")),
+            json.dumps(insight_data.get("areas_of_attention")),
+            insight_data.get("next_steps"),
+        ))
+        insight_id = cursor.fetchone()[0]
+        conn.commit()
+        return str(insight_id)
     except Exception as e:
-        raise RuntimeError(f"Unexpected error saving ai_insight: {str(e)}")
+        conn.rollback()
+        raise RuntimeError(f"DB error: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_user_by_email(email: str):
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+        return cursor.fetchone()
+    finally:
+        cursor.close()
+        conn.close()
+
+def create_user(email: str, hashed_password: str, first_name: str, last_name: str, nin_verified: bool = False) -> str:
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        query = "INSERT INTO users (email, hashed_password, first_name, last_name, nin_verified) VALUES (%s, %s, %s, %s, %s) RETURNING user_id"
+        cursor.execute(query, (email, hashed_password, first_name, last_name, nin_verified))
+        user_id = cursor.fetchone()[0]
+        conn.commit()
+        return str(user_id)
+    except Exception as e:
+        conn.rollback()
+        raise RuntimeError(f"DB error: {e}")
+    finally:
+        cursor.close()
+        conn.close()
