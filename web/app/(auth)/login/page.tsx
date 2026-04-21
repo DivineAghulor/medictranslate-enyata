@@ -63,16 +63,18 @@ export default function LoginPage() {
 
     startTransition(() => {
       void (async () => {
-        try {
-          await login(values.email.trim(), values.password);
-          setLoggedUser({
-            email: values.email.trim(),
-            password: values.password,
-          });
-          router.push("/app");
-        } catch (err) {
-          setFormError(err instanceof Error ? err.message : "Login failed.");
+        const result = await login(values.email.trim(), values.password);
+
+        if (!result.ok) {
+          setFormError(result.error);
+          return;
         }
+
+        setLoggedUser({
+          email: values.email.trim(),
+          password: values.password,
+        });
+        router.push("/app");
       })();
     });
   }

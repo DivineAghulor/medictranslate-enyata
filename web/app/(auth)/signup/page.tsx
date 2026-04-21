@@ -77,22 +77,24 @@ export default function SignupPage() {
 
     startTransition(() => {
       void (async () => {
-        try {
-          await signup(
-            values.email.trim(),
-            values.password,
-            values.nin.trim(),
-            values.firstName.trim(),
-            values.lastName.trim(),
-          );
-          setLoggedUser({
-            email: values.email.trim(),
-            password: values.password,
-          });
-          router.push("/app");
-        } catch (err) {
-          setFormError(err instanceof Error ? err.message : "Signup failed.");
+        const result = await signup(
+          values.email.trim(),
+          values.password,
+          values.nin.trim(),
+          values.firstName.trim(),
+          values.lastName.trim(),
+        );
+
+        if (!result.ok) {
+          setFormError(result.error);
+          return;
         }
+
+        setLoggedUser({
+          email: values.email.trim(),
+          password: values.password,
+        });
+        router.push("/app");
       })();
     });
   }
